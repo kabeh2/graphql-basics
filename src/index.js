@@ -89,7 +89,7 @@ const typeDefs = `
     type Mutation {
       createUser(name: String!, email: String!, age: Int): User!
       createPost(title: String!, body: String!, published: Boolean!, author: ID!): Post!
-      createComment(text: String, author: ID!, posts: ID!): Comment!
+      createComment(text: String!, author: ID!, posts: ID!): Comment!
     }
 
     type User {
@@ -184,9 +184,7 @@ const resolvers = {
 
       const user = {
         id: uuidv4(),
-        name: args.name,
-        email: args.email,
-        age: args.age,
+        ...args,
       };
 
       users.push(user);
@@ -202,10 +200,7 @@ const resolvers = {
 
       const post = {
         id: uuidv4(),
-        title: args.title,
-        body: args.body,
-        published: args.published,
-        author: args.author,
+        ...args,
       };
 
       posts.push(post);
@@ -215,7 +210,7 @@ const resolvers = {
     createComment(parent, args, ctx, info) {
       const userExists = users.some((user) => user.id === args.author);
       const postExists = posts.some(
-        (post) => post.id === args.post && posts.published
+        (post) => post.id === args.posts && post.published
       );
 
       if (!userExists) {
@@ -226,9 +221,7 @@ const resolvers = {
 
       const comment = {
         id: uuidv4(),
-        text: args.text,
-        author: args.author,
-        posts: args.post,
+        ...args,
       };
 
       comments.push(comment);
